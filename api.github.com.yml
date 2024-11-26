@@ -1,0 +1,216 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: GitHub Issues and Milestones API
+  description: Fetch issues and milestones from a GitHub repository.
+  license:
+    name: MIT
+servers:
+  - url: https://api.github.com
+paths:
+  /repos/{owner}/{repo}/issues/{issue_number}:
+    get:
+      summary: Get a specific issue by its number
+      operationId: getIssue
+      tags:
+        - issues
+      parameters:
+        - name: owner
+          in: path
+          description: The GitHub organization or user name.
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          description: The name of the repository.
+          required: true
+          schema:
+            type: string
+        - name: issue_number
+          in: path
+          description: The number of the issue to retrieve.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details of the requested issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Issue"
+        "404":
+          description: Issue not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /repos/{owner}/{repo}/milestones:
+    get:
+      summary: List all milestones in a repository
+      operationId: listMilestones
+      tags:
+        - milestones
+      parameters:
+        - name: owner
+          in: path
+          description: The GitHub organization or user name.
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          description: The name of the repository.
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: Filter milestones by state (open, closed, or all).
+          required: false
+          schema:
+            type: string
+            enum:
+              - open
+              - closed
+              - all
+          default: open
+      responses:
+        "200":
+          description: A list of milestones
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Milestones"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /repos/{owner}/{repo}/milestones/{milestone_number}:
+    get:
+      summary: Get a specific milestone by its number
+      operationId: getMilestone
+      tags:
+        - milestones
+      parameters:
+        - name: owner
+          in: path
+          description: The GitHub organization or user name.
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          description: The name of the repository.
+          required: true
+          schema:
+            type: string
+        - name: milestone_number
+          in: path
+          description: The number of the milestone to retrieve.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details of the requested milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Milestone"
+        "404":
+          description: Milestone not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Issue:
+      type: object
+      required:
+        - id
+        - title
+        - state
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        state:
+          type: string
+          enum:
+            - open
+            - closed
+        labels:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        html_url:
+          type: string
+    Issues:
+      type: array
+      items:
+        $ref: "#/components/schemas/Issue"
+    Milestone:
+      type: object
+      required:
+        - id
+        - title
+        - state
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        state:
+          type: string
+          enum:
+            - open
+            - closed
+        description:
+          type: string
+        due_on:
+          type: string
+          format: date-time
+        html_url:
+          type: string
+    Milestones:
+      type: array
+      items:
+        $ref: "#/components/schemas/Milestone"
+    Error:
+      type: object
+      required:
+        - message
+        - documentation_url
+      properties:
+        message:
+          type: string
+        documentation_url:
+          type: string
+
