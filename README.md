@@ -56,3 +56,9 @@ We welcome contributions to expand this library! To contribute:
 ## License
 
 This project is licensed under the [MIT License](https://spdx.org/licenses/MIT.html).
+
+---
+
+## Additional Resources
+
+For more examples of custom GPT Actions, check out the [OpenAI Cookbook](https://cookbook.openai.com/topic/chatgpt).
